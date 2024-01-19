@@ -15,7 +15,7 @@ const babelOptions = {
 
 console.log(process.env.NODE_ENV);
 module.exports = {
-    target: 'node',
+    target: 'web',
     entry: './src/midiplex.ts',
     mode: process.env.NODE_ENV,
     devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : false,
@@ -24,7 +24,7 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         library: {
             type: 'umd',
-            name: 'midiplex'
+            name: 'Midiplex'
         }
     },
     optimization: {
@@ -50,7 +50,7 @@ module.exports = {
                         loader: 'ts-loader',
                         options: {
                             onlyCompileBundledFiles: true,
-                            transpileOnly: true
+                            //transpileOnly: true
                         }
                     }
                 ],
