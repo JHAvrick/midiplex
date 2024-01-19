@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
 import { CCClampNode } from './cc-clamp-node';
-import { DebugNode } from './debug-node';
+import { DebugNode } from './debug-node'; 
 import { MidiplexMessage } from '../midiplex-message';
 import { Util } from '../util';
 
