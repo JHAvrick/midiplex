@@ -16,7 +16,7 @@ const babelOptions = {
 console.log(process.env.NODE_ENV);
 module.exports = {
     target: 'node',
-    entry: './src/index.ts',
+    entry: './src/midiplex.ts',
     mode: process.env.NODE_ENV,
     devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : false,
     output: {

@@ -6,7 +6,7 @@
     "test": "jest",
     "demo": "cross-env NODE_ENV=development webpack-dev-server --config ./demo/webpack.config.js",
     "dev": "cross-env NODE_ENV=development webpack -w --stats-error-details",
-    "build": "cross-env NODE_ENV=production webpack -w --stats-error-details"
+    "build": "cross-env NODE_ENV=production webpack --stats-error-details"
   },
   "author": "",
   "license": "ISC",

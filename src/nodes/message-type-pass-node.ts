@@ -1,7 +1,11 @@
 import { MidiplexNodeInstance } from "@/node-instance";
 import { AllMessageTypes } from "@/util";
 
-type MessageTypeFilterNodeTypeDef = {
+/**
+ * MessageTypePassNode: This node passes only specified message types.
+ */
+
+type MessageTypePassNodeTypeDef = {
     inputs: {
         in: MidiMessageType
     },
@@ -14,7 +18,7 @@ type MessageTypeFilterNodeTypeDef = {
     state: {}
 }
 
-const MessageTypeFilterNodeDef :  MidiplexNodeDefinition<MessageTypeFilterNodeTypeDef> = {
+const MessageTypePassNodeDef :  MidiplexNodeDefinition<MessageTypePassNodeTypeDef> = {
     name: 'Message Type Filter',
     key: 'MESSAGE_TYPE_FILTER_NODE',
     description: '',
@@ -46,10 +50,10 @@ const MessageTypeFilterNodeDef :  MidiplexNodeDefinition<MessageTypeFilterNodeTy
 };
 
 
-class MessageTypeFilterNode extends MidiplexNodeInstance<MessageTypeFilterNodeTypeDef> {
-    constructor(key: string, config: NodeConfig<MessageTypeFilterNodeTypeDef> = {}){
-        super(key, MessageTypeFilterNodeDef, config);
+class MessageTypePassNode extends MidiplexNodeInstance<MessageTypePassNodeTypeDef> {
+    constructor(key: string, config: NodeConfig<MessageTypePassNodeTypeDef> = {}){
+        super(key, MessageTypePassNodeDef, config);
     }
 }
 
-export { MessageTypeFilterNodeTypeDef, MessageTypeFilterNodeDef, MessageTypeFilterNode };
+export { MessageTypePassNodeTypeDef, MessageTypePassNodeDef, MessageTypePassNode };
