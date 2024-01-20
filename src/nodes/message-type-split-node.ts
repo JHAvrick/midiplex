@@ -1,6 +1,10 @@
 import { MidiplexNodeInstance } from "@/node-instance";
 import { AllMessageTypes } from "@/util";
 
+/**
+ * MessageTypeSplitNode: This node sends each message received to an output edge with the same name as the message type.
+ */
+
 type MessageTypeSplitTypeDef = {
     inputs: {
         in: MidiMessageType

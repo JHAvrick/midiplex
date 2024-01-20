@@ -1,11 +1,11 @@
 import { expect, test } from '@jest/globals';
-import { MessageTypeFilterNode } from './message-type-filter-node';
+import { MessageTypePassNode } from './message-type-pass-node';
 import { DebugNode } from './debug-node';
 import { MidiplexMessage } from '../midiplex-message';
 import { Util } from '../util';
 
 let debug = new DebugNode('debug');
-let node = new MessageTypeFilterNode('message-type-split-node', {
+let node = new MessageTypePassNode('message-type-split-node', {
     props: {
         'messageTypes': ['noteon', 'noteoff']
     }
@@ -13,7 +13,7 @@ let node = new MessageTypeFilterNode('message-type-split-node', {
 
 node.connect('out', debug.getInputEdge('in'));
 
-describe('MessageTypeFilterNode', () => {
+describe('MessageTypePassNode', () => {
     test('Only "noteon" or "noteoff" message type is passed through to the "out" edge', (done) => {
         debug.setProp('callback', (m: MidiplexMessage) => {
             expect(m.type).toBe('noteon');

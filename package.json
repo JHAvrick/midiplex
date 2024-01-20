@@ -1,25 +1,26 @@
 {
   "name": "midiplex",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.0.1",
+  "main": "dist/midiplex.min.js",
   "scripts": {
     "test": "jest",
-    "demo": "cross-env NODE_ENV=development webpack-dev-server --config ./demo/webpack.config.js",
     "dev": "cross-env NODE_ENV=development webpack -w --stats-error-details",
-    "build": "cross-env NODE_ENV=production webpack -w --stats-error-details"
+    "build": "rollup --config"
   },
-  "author": "",
+  "author": "Joshua Avrick",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",
     "@babel/preset-typescript": "^7.23.2",
-    "@types/jest": "^29.5.6",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/jest": "^29.5.11",
     "@types/node": "^16.10.3",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^4.0.0",
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
+    "rollup": "^4.9.5",
     "ts-jest": "^29.1.1",
     "ts-loader": "^9.5.0",
     "ts-node": "^10.9.1",
@@ -27,13 +28,15 @@
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "tslib": "^2.6.2",
     "typescript": "5.2.2",
-    "webpack": "^5.39.1",
+    "webpack": "^5.89.0",
     "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^4.7.3"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
     "webmidi": "^3.1.6"
   },
-  "description": ""
+  "description": "A realtime MIDI message filter and routing library."
 }
