@@ -162,23 +162,7 @@ declare global {
             send: <K extends keyof T['outputs'] | 'thru'>(message: MidiplexMessage, edge: K) => void,
             receive: (handler: <K extends keyof T['inputs']>(message: MidiplexMessage, edge: K) => void) => void,
             update: (handler: () => void) => void
-        })) => void,
-        // create?: (params: ({
-        //     key: string,
-        //     prop: <K extends keyof T['props']>(key: K) => T['props'][K],
-        //     state: <K extends keyof T['state']>(key: K, newVal?: T['state'][K]) => T['state'][K]
-        // })) => void,
-        // update?: (params: ({
-        //     prop: <K extends keyof T['props']>(key: K) => T['props'][K],
-        //     state: <K extends keyof T['state']>(key: K, newVal?: T['state'][K]) => T['state'][K]
-        // })) => void,
-        // receive?: (params: ({
-        //     message: MidiplexMessage,
-        //     edge: string,
-        //     prop: <K extends keyof T['props']>(key: K) => T['props'][K],
-        //     state: <K extends keyof T['state']>(key: K, value?: T['state'][K]) => T['state'][K],
-        //     send: (message: MidiplexMessage, edge: string) => void
-        // })) => void,
+        })) => void
     }
 
     type MidiplexEdgeString = `${string}:${string}`;
@@ -210,7 +194,7 @@ declare global {
         'INPUT_NODE' | 
         'OUTPUT_NODE' | 
         'DEBUG_NODE' | 
-        'MESSAGE_TYPE_FILTER_NODE' | 
+        'MESSAGE_TYPE_PASS_NODE' | 
         'MESSAGE_TYPE_SPLIT_NODE' | 
         'TRANSPOSE_NODE' | 
         'CC_RANGE_NODE' | 
@@ -227,7 +211,7 @@ declare global {
         'OUTPUT_NODE' = 'OUTPUT_NODE',
         'INPUT_NODE' = 'INPUT_NODE',
         'DEBUG_NODE' = 'DEBUG_NODE',
-        'MESSAGE_TYPE_FILTER_NODE' = 'MESSAGE_TYPE_FILTER_NODE',
+        'MESSAGE_TYPE_PASS_NODE' = 'MESSAGE_TYPE_PASS_NODE',
         'MESSAGE_TYPE_SPLIT_NODE' = 'MESSAGE_TYPE_SPLIT_NODE',
         'TRANSPOSE_NODE' = 'TRANSPOSE_NODE',
         'CC_RANGE_NODE' = 'CC_RANGE_NODE',
