@@ -1,5 +1,10 @@
 # midiplex
 
+[Demo](https://w9wnls-5173.csb.app/) \
+[CodeSandbox](https://codesandbox.io/p/devbox/midiplex-w9wnls?file=%2Fsrc%2FApp.vue%3A77%2C25) \
+[Basic Example](#basic-example) \
+[Motivation](#motivation) 
+
 Midiplex is a realtime MIDI message filtering, routing, and mapping library built on top of [WebMidi.js](https://github.com/djipco/webmidi). Here are some example use cases:
  - Mapping "controlchange" messages between devices
  - Fine-tune the types of messages a controller can send to another device
@@ -8,10 +13,7 @@ Midiplex is a realtime MIDI message filtering, routing, and mapping library buil
  - Augmenting or supplementing device behavior
  - Creative uses such as note randomizing or "chording" notes
 
-[Demo](https://w9wnls-5173.csb.app/) - Simple UI demonstrating the ability to filter message types between a controller and device. You will need a MIDI device connected. \
-[CodeSandbox](https://codesandbox.io/p/devbox/midiplex-w9wnls?file=%2Fsrc%2FApp.vue%3A77%2C25) - CodeSandbox for above demo. \
-[Basic Example](#basic-example) \
-[Motivation](#motivation)
+Midiplex can be used in node or in a browser. Note that for the demo you will need a MIDI device or two connected.
 
 ![example](example.png)
 
