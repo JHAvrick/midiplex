@@ -133,7 +133,37 @@ const Util = Object.freeze(<const> {
         matchTrigger
     },
     Note: {
-        noteToMidi
+        noteToMidi,
+        /**
+         * Given a `noteon` or `noteoff` message, returns true if the two messages are the same type
+         * and the same note. This method ignores channel and velocity values.
+         * 
+         * @param note1 - A `MidiplexMessage` with a `noteon` or `noteoff` type
+         * @param note2 - A `MidiplexMessage` with a `noteon` or `noteoff` type
+         * @returns 
+         */
+        equals: (note1: MidiplexMessage, note2: MidiplexMessage) => {
+            return note1.type === note2.type && note1.data[1] === note2.data[1];
+        },
+        /**
+         * Generates a `noteoff` message for the given `noteon` message.
+         * 
+         * @param offNote 
+         * @param velocity 
+         * @returns 
+         */
+        on: (offNote: MidiplexMessage, velocity: number) => {
+            return new MidiplexMessage(new Uint8Array([0x90, offNote.data[1], offNote.data[2]]));
+        },
+        /**
+         * Generates a `noteoff` message for the given `noteon` message.
+         * 
+         * @param onNote 
+         * @returns 
+         */
+        off: (onNote: MidiplexMessage) => {
+            return new MidiplexMessage(new Uint8Array([0x80, onNote.data[1], onNote.data[2]]));
+        }
     },
     Generate: {
         /**

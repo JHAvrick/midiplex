@@ -20,7 +20,7 @@ type MessageTypePassNodeTypeDef = {
 
 const MessageTypePassNodeDef :  MidiplexNodeDefinition<MessageTypePassNodeTypeDef> = {
     name: 'Message Type Filter',
-    key: 'MESSAGE_TYPE_FILTER_NODE',
+    key: 'MESSAGE_TYPE_PASS_NODE',
     description: '',
     inputs: {
         in: {

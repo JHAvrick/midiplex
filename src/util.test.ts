@@ -11,7 +11,7 @@ describe('Util', () => {
         done();
     });
 
-    test('Util.Message.matchTrigger(): Match noteon', (done) => {
+    test('Util.Message.matchTrigger(): Match `note`on', (done) => {
         let m = Util.Message.create(new Uint8Array([0x90, 84, 64]), 5);
         let trigger : MidiplexTrigger = { type: 'noteon' };
         let matches = Util.Message.matchTrigger(trigger, m);
@@ -46,6 +46,22 @@ describe('Util', () => {
         expect(Util.Message.matchTrigger(trigger, match)).toBe(true);
         expect(Util.Message.matchTrigger(trigger, fail)).toBe(false);
         expect(Util.Message.matchTrigger(triggerCC, match)).toBe(false);
+        done();
+    });
+
+    test('Util.Note.equals()', (done) => {
+        let n1 = Util.Generate.noteon('D5', 127, 12);
+        let n2 = Util.Generate.noteon('D5', 45, 16);
+        let equal = Util.Note.equals(n1, n2);
+        expect(equal).toBe(true);
+        done();
+    });
+
+    test('Util.Note.equals(): Different notes', (done) => {
+        let n1 = Util.Generate.noteon('D5', 127, 12);
+        let n2 = Util.Generate.noteon('C5', 127, 16);
+        let equal = Util.Note.equals(n1, n2);
+        expect(equal).toBe(false);
         done();
     });
 

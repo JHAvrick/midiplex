@@ -15,9 +15,10 @@ declare global {
      * Node definition - these types describe the structure of a node.
      * --------------------------------------------------------------------------------------
      */
-    type MidiMessageType = "noteoff" |
-        "controlchange" |
+    type MidiMessageType = 
         "noteon" |
+        "noteoff" |
+        "controlchange" |
         "keyaftertouch" |
         "programchange" |
         "channelaftertouch" |
@@ -205,7 +206,8 @@ declare global {
         'CC_PASS_NODE' | 
         'NOTE_MAP_NODE' | 
         'SET_CHANNEL_NODE' |
-        'SPLIT_CHANNEL_NODE';
+        'SPLIT_CHANNEL_NODE' |
+        'MONO_LATCH_NODE';
     
     enum MPNode {
         'OUTPUT_NODE' = 'OUTPUT_NODE',
@@ -221,7 +223,8 @@ declare global {
         'PROGRAM_CHANGE_NODE' = 'PROGRAM_CHANGE_NODE',
         'CC_PASS_NODE' = 'CC_PASS_NODE',
         'NOTE_MAP_NODE' = 'NOTE_MAP_NODE',
-        'SET_CHANNEL_NODE' = 'SET_CHANNEL_NODE'
+        'SET_CHANNEL_NODE' = 'SET_CHANNEL_NODE',
+        'MONO_LATCH_NODE' = 'MONO_LATCH_NODE'
     }
 
     /**

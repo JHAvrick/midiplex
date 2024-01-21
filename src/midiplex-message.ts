@@ -55,7 +55,7 @@ class MidiplexMessage {
      */
     clone(channel?: number){
         let m = new MidiplexMessage(new Uint8Array([...this.message.data]), this.trace);
-        if (channel) m.setChannel(channel)
+        if (channel) m.setChannel(channel);
         return m;
     }
 
