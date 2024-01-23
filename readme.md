@@ -13,7 +13,7 @@ Midiplex is a realtime MIDI message filtering, routing, and mapping library buil
  - Augmenting or supplementing device behavior
  - Creative uses such as note randomizing or "chording" notes
 
-Midiplex can be used in node or in a browser. Note that for the demo you will need a MIDI device or two connected.
+Midiplex can be used in node or in a browser. Note that for the demo you will need a MIDI device or two connected, or if you're hellbent on it you can create a virtual MIDI port using [MIDI-OX](http://www.midiox.com/) or similar software.
 
 ![example](example.png)
 
