@@ -152,7 +152,7 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
                 });
                 return;
             }
-            throw Error(`Message type "${message.type}" is not supported by edge ${<string> edgeKey} for node type ${this.definition.key}.`);
+            throw Error(`Message type "${message.type}" is not supported by edge "${<string> edgeKey}" for node type ${this.definition.key}.`);
         }
         throw Error(`Output edge "${edge}" does not exist.`);
     }

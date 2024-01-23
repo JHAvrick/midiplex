@@ -1,8 +1,8 @@
 import { MidiplexMessage } from "@/midiplex-message";
 import { MidiplexNodeInstance } from "@/node-instance";
-import { clamp } from "@/util";
+import { Util, convertRange } from "@/util";
 
-type CCClampNodeTypeDef = {
+type CCScaleNodeTypeDef = {
     inputs: {
         in: 'controlchange'
     },
@@ -15,10 +15,10 @@ type CCClampNodeTypeDef = {
     state: {}
 }
 
-const CCClampNodeDef : MidiplexNodeDefinition<CCClampNodeTypeDef> = {
+const CCScaleNodeDef : MidiplexNodeDefinition<CCScaleNodeTypeDef> = {
     name: 'CC Range',
-    key: 'CC_RANGE_NODE',
-    description: 'Clamp CC message values to a min/max range.',
+    key: 'CC_SCALE_NODE',
+    description: `Rescale CC messages to a smaller range. Useful for mapping a knob to a smaller range while preserving the control's full range of motion.`,
     inputs: {
         in: {
             name: 'In',
@@ -45,13 +45,19 @@ const CCClampNodeDef : MidiplexNodeDefinition<CCClampNodeTypeDef> = {
              */
             let map = prop('mapping');
             let cc = message.data[1];
-            if (map[cc]) {
+            if (map[cc] !== undefined && map[cc] !== null) {
                 let data = new Uint8Array([
                     message.data[0],
-                    message.data[1],
-                    clamp(message.data[2], map[cc].min, map[cc].max)
+                    message.data[1], 
+                    convertRange(
+                        message.data[2], 
+                        0, 
+                        127, 
+                        map[cc].min,
+                        map[cc].max
+                    )
                 ]);
-                
+
                 send(new MidiplexMessage(data), 'out');
                 return;
             }
@@ -61,10 +67,14 @@ const CCClampNodeDef : MidiplexNodeDefinition<CCClampNodeTypeDef> = {
     }
 };
 
-class CCClampNode extends MidiplexNodeInstance<CCClampNodeTypeDef> {
-    constructor(key: string, config: NodeConfig<CCClampNodeTypeDef> = {}){
-        super(key, CCClampNodeDef, config);
+/**
+ * CCScaleNode: This node "rescales" control change messages to a smaller range. Useful for mapping a control (slider, knob, etc.) to a 
+ * smaller range while preserving the control's full range of motion.
+ */
+class CCScaleNode extends MidiplexNodeInstance<CCScaleNodeTypeDef> {
+    constructor(key: string, config: NodeConfig<CCScaleNodeTypeDef> = {}){
+        super(key, CCScaleNodeDef, config);
     }
 }
 
-export { CCClampNodeTypeDef, CCClampNodeDef, CCClampNode };
+export { CCScaleNodeTypeDef, CCScaleNodeDef, CCScaleNode };

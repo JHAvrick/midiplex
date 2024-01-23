@@ -1,4 +1,5 @@
 import { MidiplexMessage } from "./midiplex-message";
+import * as Keyboards from './active-keyboard';
 
 const AllMessageTypes : NonEmptyArray<MidiMessageType> = [
       // MIDI channel message events
@@ -132,6 +133,42 @@ const Util = Object.freeze(<const> {
         },
         matchTrigger
     },
+    Clock: {
+        isClockMessage: (m: MidiplexMessage) => {
+            return m.type === 'clock' || m.type  === 'timecode' || m.type  === 'start' || m.type  === 'stop';
+        },
+        getTimeClockResolution(beat:  1 | 2 | 4 | 8 | 16  /* | 32 | 64 */, framesPerQuarterNote: number = 24): number {
+            // Define the frames per quarter note (assumed)
+            //const framesPerQuarterNote = 24;
+            
+            // Calculate the resolution based on the note type
+            const resolution = framesPerQuarterNote * (1 / (1 / 4) / beat);
+            
+            // Return the resolution or null for unsupported note types
+            //return Number.isFinite(resolution) ? resolution : null;
+            return resolution;
+        },
+        beat: (beat: 1 | 2 | 4 | 8 | 16 /* | 32 | 64 */, callback: () => void) => {
+            let resolution = Util.Clock.getTimeClockResolution(beat);
+            let tickCount = 0;
+            return {
+                tick: (message: MidiplexMessage) => {
+                    if (message.type === 'clock') tickCount++;
+                    else if (message.type === 'start' || message.type === 'stop') tickCount = 0;
+                    else return;
+                    if (tickCount % resolution === 0) {
+                        callback();
+                    }
+                },
+                /**
+                 * Manually reset the count. Count resets automatically if a `stop` message is received.`
+                 */
+                reset: () => {
+                    tickCount = 0;
+                }
+            }
+        }
+    },
     Note: {
         noteToMidi,
         /**
@@ -163,6 +200,23 @@ const Util = Object.freeze(<const> {
          */
         off: (onNote: MidiplexMessage) => {
             return new MidiplexMessage(new Uint8Array([0x80, onNote.data[1], onNote.data[2]]));
+        },
+        getPolyKeyboard(){
+            return new Keyboards.KeyboardPoly();
+        },
+        getPolyLatchKeyboard(maxLatch?: number){
+            return new Keyboards.KeyboardPolyLatch(maxLatch);
+        },
+        getMonoKeyboard(){
+            return new Keyboards.KeyboardMono();
+        },
+        getMonoLatchKeyboard(){
+            return new Keyboards.KeyboardMonoLatch();
+        }
+    },
+    Controlchange: {
+        inRange: (cc: MidiplexMessage, range: CCRange) => {
+            return cc.data[2] >= range.min && cc.data[2] <= range.max;
         }
     },
     Generate: {

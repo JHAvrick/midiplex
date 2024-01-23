@@ -8,53 +8,48 @@ let debug = new DebugNode('debug');
 let node = new CCRangeNode('cc-range-node', { 
         props: {
             mapping: {
-                0: [64, 100],
-                74: [64, 100]
+                74: { min: 0, max: 64 }
             }
         }
     });
     
-    node.connect('out', debug.getInputEdge('in'));
+node.connect('out', debug.getInputEdge('in'));
 
-let ccFalsey = Util.Generate.controlchange(0, 0); //CC 0 is falsey - is this even a valid CC message?
-let ccMin = Util.Generate.controlchange(74, 0); //Too low
-let ccInRange = Util.Generate.controlchange(74, 75); //In range, will be rescaled
-let ccMax = Util.Generate.controlchange(74, 127); //Too high
+// let ccFalsy = Util.Generate.controlchange(0, 0); //CC 0 is falsy - is this even a valid CC message?
+// let ccMin = Util.Generate.controlchange(74, 0); //Too low
+// let ccInRange = Util.Generate.controlchange(74, 75); //In range, will be rescaled
+// let ccMax = Util.Generate.controlchange(74, 127); //Too high
+
+let ccInRange = Util.Generate.controlchange(74, 52); 
+let ccOutOfRange = Util.Generate.controlchange(74, 65);
+
 
 describe('CCRangeNode', () => {
-    test('Falsey CC message is processed correctly', (done) => {
+    test('CC value above range is not sent, CC value within range is sent', (done) => {
         debug.setProp('callback', (m: MidiplexMessage) => {
-            expect(m.data[2] >= 64).toBe(true);
+            expect(m.data[2] === 52).toBe(true);
             done();
         });
 
-        node.receive(ccFalsey, 'in');
-    });
-
-    test('CC value is scaled to min value specified by range', (done) => {
-        debug.setProp('callback', (m: MidiplexMessage) => {
-            expect(m.data[2] >= 64).toBe(true);
-            done();
-        });
-
-        node.receive(ccMin, 'in');
-    });
-
-    test('CC value is scaled within the given range', (done) => {
-        debug.setProp('callback', (m: MidiplexMessage) => {
-            expect(m.data[2] >= 64 && m.data[2] <= 100).toBe(true);
-            done();
-        });
-
+        node.receive(ccOutOfRange, 'in');
         node.receive(ccInRange, 'in');
     });
 
-    test('CC value is scaled to max value specified by range', (done) => {
-        debug.setProp('callback', (m: MidiplexMessage) => {
-            expect(m.data[2] === 100).toBe(true);
-            done();
-        });
+    // test('CC value is scaled within the given range', (done) => {
+    //     debug.setProp('callback', (m: MidiplexMessage) => {
+    //         expect(m.data[2] >= 64 && m.data[2] <= 100).toBe(true);
+    //         done();
+    //     });
 
-        node.receive(ccMax, 'in');
-    });
+    //     node.receive(ccInRange, 'in');
+    // });
+
+    // test('CC value is scaled to max value specified by range', (done) => {
+    //     debug.setProp('callback', (m: MidiplexMessage) => {
+    //         expect(m.data[2] === 100).toBe(true);
+    //         done();
+    //     });
+
+    //     node.receive(ccMax, 'in');
+    // });
 })

@@ -1,6 +1,5 @@
-import { MidiplexMessage } from "@/midiplex-message";
 import { MidiplexNodeInstance } from "@/node-instance";
-import { convertRange } from "@/util";
+import { Util } from "@/util";
 
 type CCRangeNodeTypeDef = {
     inputs: {
@@ -18,7 +17,7 @@ type CCRangeNodeTypeDef = {
 const CCRangeNodeDef : MidiplexNodeDefinition<CCRangeNodeTypeDef> = {
     name: 'CC Range',
     key: 'CC_RANGE_NODE',
-    description: `Rescale CC messages to a smaller range. Useful for mapping a knob to a smaller range while preserving the control's full range of motion.`,
+    description: `Filter the range of values sent for a given CC.`,
     inputs: {
         in: {
             name: 'In',
@@ -45,17 +44,16 @@ const CCRangeNodeDef : MidiplexNodeDefinition<CCRangeNodeTypeDef> = {
              */
             let map = prop('mapping');
             let cc = message.data[1];
-            if (map[cc] !== undefined && map[cc] !== null) {
-                let data = new Uint8Array([
-                    message.data[0],
-                    message.data[1], 
-                    convertRange(message.data[2], 0, 127, map[cc][0], map[cc][1])
-                ]);
-
-                send(new MidiplexMessage(data), 'out');
+            let range = map[cc];
+            if (range) { 
+                //If a mapping exists, only send if the message is within the range
+                if (Util.Controlchange.inRange(message, range)){
+                    send(message, 'out');
+                }
                 return;
             }
 
+            //If no mapping exists, send the message unmodified
             send(message, 'out');
         })
     }

@@ -16,6 +16,10 @@ declare global {
      * --------------------------------------------------------------------------------------
      */
     type MidiMessageType = 
+        "clock" |
+        "timecode" |
+        "start" | 
+        "stop" |
         "noteon" |
         "noteoff" |
         "controlchange" |
@@ -45,6 +49,8 @@ declare global {
         "rpn-datadecrement";
 
     type MidiChannelMessageType = 'noteon' | 'noteoff' | 'controlchange' | 'keyaftertouch' | 'programchange' | 'channelaftertouch' | 'pitchbend';
+
+    type MidiClockMessageType = 'clock' | 'timecode' | 'start' | 'stop';
 
     //type MidiMessageType = 'noteoff' | 'noteon' | 'keyaftertouch' | 'polykeypressure' | 'controlchange' | 'programchange' | 'pitchbend' | 'channelaftertouch' | 'system';
     //type MidiChannelMessageType = 'noteoff' | 'noteon' | 'keyaftertouch' | 'controlchange' | 'programchange' | 'channelaftertouch' | 'pitchbend';
@@ -131,7 +137,7 @@ declare global {
         name: string,
         //key: string,
         //key should be a type of MidiplexNode
-        key: MidiplexNodeType,
+        key: string,
         description?: string,
         inputs?: {
             [key in keyof T['inputs']]: {
@@ -232,9 +238,13 @@ declare global {
      * Prop types
      * --------------------------------------------------------------------------------------
      */
+    type CCRange =  {
+        min: IntRange<0, 128>,
+        max: IntRange<0, 128>
+    }; // | [IntRange<0, 128>, IntRange<0, 128>];
 
     interface CCRangeMap {
-        [key: number]: [IntRange<0, 128>, IntRange<0, 128>]
+        [key: number]: CCRange
     }
 
     interface NoteMap {

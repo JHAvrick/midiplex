@@ -12,10 +12,16 @@ class MidiplexMessage {
      * The original WebMidi message.
      */
     private message: Message;
+
+    /**
+     * Beat can be populated on creation if the data is available
+     */
+    private _beat?: number;
     
-    constructor(message: Message | Uint8Array, trace: string[] = []){
+    constructor(message: Message | Uint8Array, opts?: { trace?: string[], beat?: number }){
         this.message = message instanceof Message ? message : new Message(message);
-        this.trace = trace;
+        this.trace = opts?.trace ?? [];
+        this._beat = opts?.beat;
     }
 
     addTrace(nodeKey: string){
@@ -54,7 +60,7 @@ class MidiplexMessage {
      * @returns 
      */
     clone(channel?: number){
-        let m = new MidiplexMessage(new Uint8Array([...this.message.data]), this.trace);
+        let m = new MidiplexMessage(new Uint8Array([...this.message.data]), { trace: this.trace });
         if (channel) m.setChannel(channel);
         return m;
     }
@@ -73,6 +79,10 @@ class MidiplexMessage {
 
     get data(){
         return this.message.data;
+    }
+
+    get beat(){
+        return this._beat;
     }
 }
 

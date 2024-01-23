@@ -1,5 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
+import { babel } from '@rollup/plugin-babel';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
@@ -18,5 +19,5 @@ export default {
         //     webmidi: 'WebMidi'
         // }
     },
-    plugins: [typescript(), nodeResolve()],
+    plugins: [typescript(), nodeResolve(), babel({ babelHelpers: 'bundled', extensions: ['.ts', '.tsx'] })],
 };

@@ -1,4 +1,5 @@
 import { MidiplexMessage } from "./midiplex-message";
+import * as Keyboards from './active-keyboard';
 declare const AllMessageTypes: NonEmptyArray<MidiMessageType>;
 declare const ChannelMessageTypes: readonly ["noteoff", "noteon", "controlchange", "keyaftertouch", "programchange", "channelaftertouch", "pitchbend"];
 declare const pickMessageTypes: (messageTypesToPick: MidiMessageType[]) => MidiMessageType[];
@@ -29,8 +30,50 @@ declare const Util: Readonly<{
         readonly create: (data: Uint8Array, channel?: number) => MidiplexMessage;
         readonly matchTrigger: (trigger: MidiplexTrigger, m: MidiplexMessage) => boolean;
     };
+    readonly Clock: {
+        readonly isClockMessage: (m: MidiplexMessage) => boolean;
+        readonly getTimeClockResolution: (beat: 1 | 2 | 4 | 8 | 16, framesPerQuarterNote?: number) => number;
+        readonly beat: (beat: 1 | 2 | 4 | 8 | 16, callback: () => void) => {
+            tick: (message: MidiplexMessage) => void;
+            /**
+             * Manually reset the count. Count resets automatically if a `stop` message is received.`
+             */
+            reset: () => void;
+        };
+    };
     readonly Note: {
         readonly noteToMidi: (note: string) => number;
+        /**
+         * Given a `noteon` or `noteoff` message, returns true if the two messages are the same type
+         * and the same note. This method ignores channel and velocity values.
+         *
+         * @param note1 - A `MidiplexMessage` with a `noteon` or `noteoff` type
+         * @param note2 - A `MidiplexMessage` with a `noteon` or `noteoff` type
+         * @returns
+         */
+        readonly equals: (note1: MidiplexMessage, note2: MidiplexMessage) => boolean;
+        /**
+         * Generates a `noteoff` message for the given `noteon` message.
+         *
+         * @param offNote
+         * @param velocity
+         * @returns
+         */
+        readonly on: (offNote: MidiplexMessage, velocity: number) => MidiplexMessage;
+        /**
+         * Generates a `noteoff` message for the given `noteon` message.
+         *
+         * @param onNote
+         * @returns
+         */
+        readonly off: (onNote: MidiplexMessage) => MidiplexMessage;
+        readonly getPolyKeyboard: () => Keyboards.KeyboardPoly;
+        readonly getPolyLatchKeyboard: (maxLatch?: number) => Keyboards.KeyboardPolyLatch;
+        readonly getMonoKeyboard: () => Keyboards.KeyboardMono;
+        readonly getMonoLatchKeyboard: () => Keyboards.KeyboardMonoLatch;
+    };
+    readonly Controlchange: {
+        readonly inRange: (cc: MidiplexMessage, range: CCRange) => boolean;
     };
     readonly Generate: {
         /**

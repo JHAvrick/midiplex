@@ -3,6 +3,7 @@ import { MidiplexNodeInstance } from "@/node-instance";
 type DebugNodeTypeDef = {
     inputs: {
         in: MidiMessageType;
+        clock: MidiClockMessageType;
     };
     outputs: {
         out: MidiMessageType;

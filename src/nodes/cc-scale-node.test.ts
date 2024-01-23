@@ -1,11 +1,11 @@
 import { expect, test } from '@jest/globals';
-import { CCClampNode } from './cc-clamp-node';
-import { DebugNode } from './debug-node'; 
+import { CCScaleNode } from './cc-scale-node';
+import { DebugNode } from './debug-node';
 import { MidiplexMessage } from '../midiplex-message';
 import { Util } from '../util';
 
 let debug = new DebugNode('debug');
-let node = new CCClampNode('cc-clamp-node', { 
+let node = new CCScaleNode('cc-scale-node', { 
         props: {
             mapping: {
                 0: { min: 64, max: 100 },
@@ -21,35 +21,35 @@ let ccMin = Util.Generate.controlchange(74, 0); //Too low
 let ccInRange = Util.Generate.controlchange(74, 75); //In range, will be rescaled
 let ccMax = Util.Generate.controlchange(74, 127); //Too high
 
-describe('CCClampNode', () => {
+describe('CCScaleNode', () => {
     test('Falsey CC message is processed correctly', (done) => {
         debug.setProp('callback', (m: MidiplexMessage) => {
-            expect(m.data[2] === 64).toBe(true);
+            expect(m.data[2] >= 64).toBe(true);
             done();
         });
 
         node.receive(ccFalsey, 'in');
     });
 
-    test('CC value is clamped to min value specified by range', (done) => {
+    test('CC value is scaled to min value specified by range', (done) => {
         debug.setProp('callback', (m: MidiplexMessage) => {
-            expect(m.data[2] === 64).toBe(true);
+            expect(m.data[2] >= 64).toBe(true);
             done();
         });
 
         node.receive(ccMin, 'in');
     });
 
-    test('CC value is clamped within the given range', (done) => {
+    test('CC value is scaled within the given range', (done) => {
         debug.setProp('callback', (m: MidiplexMessage) => {
-            expect(m.data[2] === 75).toBe(true);
+            expect(m.data[2] >= 64 && m.data[2] <= 100).toBe(true);
             done();
         });
 
         node.receive(ccInRange, 'in');
     });
 
-    test('CC value is clamped to max value specified by range', (done) => {
+    test('CC value is scaled to max value specified by range', (done) => {
         debug.setProp('callback', (m: MidiplexMessage) => {
             expect(m.data[2] === 100).toBe(true);
             done();

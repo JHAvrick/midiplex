@@ -1,10 +1,11 @@
 import { MidiplexMessage } from "@/midiplex-message";
 import { MidiplexNodeInstance } from "@/node-instance";
-import { AllMessageTypes } from "@/util";
+import { AllMessageTypes, Util } from "@/util";
 
 type DebugNodeTypeDef = {
     inputs: {
-        in: MidiMessageType
+        in: MidiMessageType,
+        clock: MidiClockMessageType
     },
     outputs: {
         out: MidiMessageType
@@ -24,6 +25,10 @@ const DebugNodeDef : MidiplexNodeDefinition<DebugNodeTypeDef> = {
         in: {
             name: 'In',
             messageTypes: AllMessageTypes
+        },
+        clock: {
+            name: 'Clock',
+            messageTypes: ['clock', 'start', 'stop']
         }
     },
     outputs: {
@@ -43,12 +48,34 @@ const DebugNodeDef : MidiplexNodeDefinition<DebugNodeTypeDef> = {
         }
     },
     node({ send, receive, prop }){
+        // let quarterNote = Util.Clock.onBeat(4, () => {
+        //     console.log('quarter note');
+        // })
+
+        // // let eighthNote = Util.Clock.onBeat(8, () => {
+        // //     console.log('eighth note');
+        // // })
+
+        // let sixteenthNote = Util.Clock.onBeat(16, () => {
+        //     console.log('sixteenth note');
+        // })
+
         receive((message, edge) => {
+            if (edge === 'clock' && message.beat === 64){
+                return;
+            }
+
             if (prop('logToConsole')) {
                 console.log(message);
             }
+
             prop('callback')(message);
-            send(message, 'out');
+
+            if (!Util.Clock.isClockMessage(message)){
+                send(message, 'out');
+                return;
+            }
+
         });
     }
 }

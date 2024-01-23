@@ -9,7 +9,14 @@ declare class MidiplexMessage {
      * The original WebMidi message.
      */
     private message;
-    constructor(message: Message | Uint8Array, trace?: string[]);
+    /**
+     * Beat can be populated on creation if the data is available
+     */
+    private _beat?;
+    constructor(message: Message | Uint8Array, opts?: {
+        trace?: string[];
+        beat?: number;
+    });
     addTrace(nodeKey: string): void;
     hasTrace(nodeKey: string): boolean;
     /**
@@ -31,5 +38,6 @@ declare class MidiplexMessage {
     get channel(): number;
     get type(): MidiMessageType;
     get data(): number[];
+    get beat(): number | undefined;
 }
 export { MidiplexMessage };

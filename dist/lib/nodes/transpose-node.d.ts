@@ -14,7 +14,7 @@ type TransposeNodeTypeDef = {
 };
 declare const TransposeNodeDef: {
     name: string;
-    key: "TRANSPOSE_NODE";
+    key: string;
     description: string;
     inputs: {
         in: {

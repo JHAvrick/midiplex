@@ -5,6 +5,7 @@ import { MessageTypePassNode } from './message-type-pass-node';
 import { MessageTypeSplitNode } from './message-type-split-node';
 import { TransposeNode } from './transpose-node';
 import { CCRangeNode } from './cc-range-node';
+import { CCScaleNode } from './cc-scale-node';
 import { CCMapNode } from './cc-map-node';
 import { TogglePathNode } from './toggle-path';
 import { CustomFilterNode } from './custom-filter-node';
@@ -22,6 +23,7 @@ export {
     MessageTypeSplitNode,
     TransposeNode,
     CCRangeNode,
+    CCScaleNode,
     CCMapNode,
     TogglePathNode,
     CustomFilterNode,
