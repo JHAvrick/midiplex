@@ -16,10 +16,12 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
     private outputs: Map<NodeInstanceOutputEdgeKey<D>, MidiplexEdgeInstance<D>> = new Map<NodeInstanceOutputEdgeKey<D>, MidiplexEdgeInstance<D>>();
     private receiveHandler: null | ((message: MidiplexMessage, edgeKey: keyof D['inputs']) => void) = null;
     private updateHandler: null | (() => void) = null;
+    private ignoreUnknownMessageTypes: boolean = false;
 
     constructor(key: string, node: MidiplexNodeDefinition<D>, config: NodeConfig<D> = {}){
         this.key = key;
         this.definition = node;
+        this.ignoreUnknownMessageTypes = node.ignoreUnknownMessageTypes ?? false;
 
         //Build props, state, edges
         for (let key in node.props) {
@@ -152,7 +154,12 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
                 });
                 return;
             }
-            throw Error(`Message type "${message.type}" is not supported by edge "${<string> edgeKey}" for node type ${this.definition.key}.`);
+
+            if (this.ignoreUnknownMessageTypes){
+                return;
+            } else {
+                throw Error(`Message type "${message.type}" is not supported by edge "${<string> edgeKey}" for node type ${this.definition.key}.`);   
+            }
         }
         throw Error(`Output edge "${edge}" does not exist.`);
     }

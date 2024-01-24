@@ -12,6 +12,7 @@ import { CustomFilterNode } from './custom-filter-node';
 //import { ProgramChangeNode } from './program-change-node';
 import { CCPassNode } from './cc-pass-node';
 import { NoteMapNode } from './note-map-node';
+import { NotePolyLatchNode } from './note-poly-latch-node';
 import { SetChannelNode } from './set-channel-node';
 import { SplitChannelNode } from './split-channel-node';
 
@@ -30,6 +31,7 @@ export {
     //ProgramChangeNode,
     CCPassNode,
     NoteMapNode,
+    NotePolyLatchNode,
     SetChannelNode,
     SplitChannelNode
 }

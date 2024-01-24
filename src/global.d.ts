@@ -139,6 +139,7 @@ declare global {
         //key should be a type of MidiplexNode
         key: string,
         description?: string,
+        ignoreUnknownMessageTypes?: boolean,
         inputs?: {
             [key in keyof T['inputs']]: {
                 name: string,

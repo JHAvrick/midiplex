@@ -1,5 +1,6 @@
 import { MidiplexMessage } from "./midiplex-message";
 import { EventEmitter } from "./event-emitter";
+import { Util } from "./util";
 
 /**
  * This class accepts a stream of `noteon` and `noteoff` messages and keeps track of the active notes.
@@ -16,13 +17,13 @@ class KeyboardPoly {
 
     message(m: MidiplexMessage){
         if (m.type === 'noteon'){
-            if (!this.notes.has(m.data[2])){
-                this.notes.set(m.data[2], m);
+            if (!this.notes.has(m.data[1])){
+                this.notes.set(m.data[1], m);
                 this.events.emit('noteon', m);
             }
         } else if (m.type === 'noteoff'){
-            if (this.notes.has(m.data[2])){
-                this.notes.delete(m.data[2]);
+            if (this.notes.has(m.data[1])){
+                this.notes.delete(m.data[1]);
                 this.events.emit('noteoff', m);
             }
         }
@@ -56,24 +57,30 @@ class KeyboardPolyLatch {
 
     message(m: MidiplexMessage){
         if (m.type === 'noteon'){
-            if (!this.notes.has(m.data[2])){
+
+
+            // If the note doesn't exist, add it
+            if (!this.notes.has(m.data[1])){
+                console.log('adding note', m.data[1])
 
                 // Add the new note
-                this.notes.set(m.data[2], m);
+                this.notes.set(m.data[1], m);
                 this.events.emit('noteon', m);
 
                 // Remove the oldest note if we've reached the max latch
                 if (this.notes.size > this._maxLatch){
+                    console.log('removing note, too many', this.notes.values().next().value.data[1]);
                     let note = this.notes.values().next().value;
-                    this.notes.delete(note.data[2]);
-                    this.events.emit('noteoff', note);
+                    this.notes.delete(note.data[1]);
+                    this.events.emit('noteoff',  Util.Note.off(note));
                 }
 
             } else {
 
                 // Remove the note if it already exists
-                this.notes.delete(m.data[2]);
-                this.events.emit('noteoff', m);
+                console.log('removing note', m.data[1]);
+                this.notes.delete(m.data[1]);
+                this.events.emit('noteoff', Util.Note.off(m));
             }
         }
     }
@@ -89,7 +96,7 @@ class KeyboardPolyLatch {
             let notes = this.notes.values();
             for (let i = 0; i < this.notes.size - this._maxLatch; i++){
                 let note = notes.next().value;
-                this.notes.delete(note.data[2]);
+                this.notes.delete(note.data[1]);
                 this.events.emit('noteoff', note);
             }
         }
@@ -153,7 +160,7 @@ class KeyboardMonoLatch {
                 this.events.emit('noteoff', this.note);
 
                 // If the note is the same as the current note, clear it
-                if (this.note.data[2] === m.data[2]){
+                if (this.note.data[1] === m.data[1]){
                     this.note = null;
                     return;
                 }

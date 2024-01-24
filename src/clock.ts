@@ -8,15 +8,26 @@ class MidiClock {
     constructor(timeSignature: TimeSignature, ticksPerBeat: number = 24) {
         this.timeSignature = timeSignature;
         this.ticksPerBeat = ticksPerBeat;
-        this.tickCount = 0;
+        this.tickCount = -1;
     }
 
     tick(type: MidiClockMessageType = 'clock'): number {
-        if (type === 'start' || type === 'stop') {
-            this.tickCount = 0;
-        } else if (type === 'clock') {
+        if (type === 'start'){
+            this.tickCount = -1;
+        } else if (type === 'stop'){
+            this.tickCount = -1;
+        } else {
             this.tickCount++;
         }
+
+
+
+        // if (type === 'start' || type === 'stop') {
+        //     this.tickCount = 0;
+        // } else if (type === 'clock') {
+        //     this.tickCount++;
+        // }
+        console.log(type, this.tickCount, this.getBeatDivision());
         return this.getBeatDivision();
     }
 
@@ -40,7 +51,9 @@ class MidiClock {
         if (this.tickCount % (ticksPerMeasure / 8) === 0) return 8;
         if (this.tickCount % (ticksPerMeasure / 16) === 0) return 16;
         if (this.tickCount % (ticksPerMeasure / 32) === 0) return 32;
-        //if (this.tickCount % (ticksPerMeasure / 64) === 0) return 64;
+        if (this.tickCount % (ticksPerMeasure / 64) === 0) return 64;
+
+        //return this.tickCount % 24 == 0 ? 4 : 0;
 
         return 0;
     }

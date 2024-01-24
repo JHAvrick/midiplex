@@ -61,7 +61,14 @@ const DebugNodeDef : MidiplexNodeDefinition<DebugNodeTypeDef> = {
         // })
 
         receive((message, edge) => {
-            if (edge === 'clock' && message.beat === 64){
+            if (edge === 'clock' && message.type === 'clock'  && message.beat === 32){
+                //console.log(message.beat);
+                send(Util.Generate.noteon(75, 64), 'out');
+                send(Util.Generate.noteon(77, 64), 'out');
+                setTimeout(() => {
+                    send(Util.Generate.noteoff(75, 64), 'out');
+                    send(Util.Generate.noteoff(77, 64), 'out');
+                }, 500); 
                 return;
             }
 

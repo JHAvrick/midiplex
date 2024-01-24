@@ -21,8 +21,16 @@ const { WebMidi, Nodes, Util } = require('./dist/midiplex.min.js');
 
 (async () => {
     await WebMidi.enable();
+    
+    //WebMidi.sendAllNotesOff();
+
     WebMidi.inputs.forEach(input => {
         console.log(input.name, input.id);
+    })
+
+    WebMidi.outputs.forEach(output => {
+        console.log(output.name, output.id);
+        output.sendAllNotesOff();
     })
 
     // WebMidi.inputs[0].on('clock', (e) => {
@@ -31,11 +39,23 @@ const { WebMidi, Nodes, Util } = require('./dist/midiplex.min.js');
 
     let input = new Nodes.InputNode('input', {
         props: {
-            inputId: WebMidi.inputs[0].id
+            inputId: 'VI49 Out'
         }
     });
 
-    input.setProp('inputId', WebMidi.inputs[0].id);
+    input.setProp('inputId', 'IAC Driver Bus 1');
+
+    let output = new Nodes.OutputNode('output', {
+        props: {
+            outputId: 'MIDI 8x8 Port 4'
+        }
+    });
+
+    output.setProp('outputId', 'MIDI 8x8 Port 4');
+
+    //input.connect('out', output.getInputEdge('in'));
+
+    // input.setProp('inputId', WebMidi.inputs[0].id);
 
     let debug = new Nodes.DebugNode('debug', {
         props: {
@@ -43,7 +63,15 @@ const { WebMidi, Nodes, Util } = require('./dist/midiplex.min.js');
         }
     });
 
+    let latch = new Nodes.NotePolyLatchNode();
+        latch.setProp('maxNotes', 1);
+
+    //input.connect('out', debug.getInputEdge('in'));
+    input.connect('clock', debug.getInputEdge('clock'));
+    //latch.connect('out', output.getInputEdge('in'));
+    debug.connect('out', output.getInputEdge('in'));
+
     
 
-    input.connect('clock', debug.getInputEdge('clock'));
+    // input.connect('clock', debug.getInputEdge('clock'));
 })();

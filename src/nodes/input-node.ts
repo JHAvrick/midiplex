@@ -22,6 +22,7 @@ const InputNodeDefinition : MidiplexNodeDefinition<InputNodeTypeDef> = {
     key: 'INPUT_NODE',
     description: 'A node that receives MIDI messages from a MIDI device. Messages are immediately sent to the node\'s output.',
     inputs: {},
+    ignoreUnknownMessageTypes: true,
     outputs: {
         out: {
             name: 'Out',

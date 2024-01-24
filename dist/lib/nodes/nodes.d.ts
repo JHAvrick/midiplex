@@ -11,6 +11,7 @@ import { TogglePathNode } from './toggle-path';
 import { CustomFilterNode } from './custom-filter-node';
 import { CCPassNode } from './cc-pass-node';
 import { NoteMapNode } from './note-map-node';
+import { NotePolyLatchNode } from './note-poly-latch-node';
 import { SetChannelNode } from './set-channel-node';
 import { SplitChannelNode } from './split-channel-node';
-export { OutputNode, InputNode, DebugNode, MessageTypePassNode, MessageTypeSplitNode, TransposeNode, CCRangeNode, CCScaleNode, CCMapNode, TogglePathNode, CustomFilterNode, CCPassNode, NoteMapNode, SetChannelNode, SplitChannelNode };
+export { OutputNode, InputNode, DebugNode, MessageTypePassNode, MessageTypeSplitNode, TransposeNode, CCRangeNode, CCScaleNode, CCMapNode, TogglePathNode, CustomFilterNode, CCPassNode, NoteMapNode, NotePolyLatchNode, SetChannelNode, SplitChannelNode };

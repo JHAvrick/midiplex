@@ -13,6 +13,7 @@ declare class MidiplexNodeInstance<D extends MidiplexNodeTypeDescription> {
     private outputs;
     private receiveHandler;
     private updateHandler;
+    private ignoreUnknownMessageTypes;
     constructor(key: string, node: MidiplexNodeDefinition<D>, config?: NodeConfig<D>);
     protected bindReceive(handler: (message: MidiplexMessage, edgeKey: keyof D['inputs']) => void): void;
     protected bindUpdate(handler: () => void): void;
