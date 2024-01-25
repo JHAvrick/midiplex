@@ -35,10 +35,9 @@ import { WebMidi, Nodes } from 'midiplex';
         // Define our nodes
         let input = new Nodes.InputNode("<input id>");
         let output = new Nodes.OutputNode("<output id>");
-        let messagePass = new Nodes.MessageTypePassNode("pass", {
-            props: {
-                messageTypes: ['noteon', 'noteoff']
-            }
+        let messagePass = new Nodes.MessageTypeFilterNode("pass", {
+            mode: 'pass', //can be 'filter' or 'pass'
+            messageTypes: ['noteon', 'noteoff']
         });
 
         // Each node has a number of "edges" which we use to route messages

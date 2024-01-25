@@ -1,5 +1,5 @@
 import { MidiplexNodeInstance } from "@/node-instance";
-import { MidiplexMessage } from "@/midiplex-message";
+import { MidiplexMessage, MidiplexClockMessage } from "@/midiplex-message";
 import { WebMidi, MessageEvent } from "webmidi";
 import { AllMessageTypes } from "@/util/util";
 import { MidiClock } from '../../util/clock';
@@ -26,11 +26,12 @@ const InputNodeDefinition : MidiplexNodeDefinition<InputNodeTypeDef> = {
     outputs: {
         out: {
             name: 'Out',
+            type: 'message',
             messageTypes: AllMessageTypes
         },
         clock: {
             name: 'Clock',
-            messageTypes: ['clock', 'timecode', 'start', 'stop']
+            type: 'clock'
         }
     },
     props: {
@@ -48,19 +49,14 @@ const InputNodeDefinition : MidiplexNodeDefinition<InputNodeTypeDef> = {
         let clock = new MidiClock(prop('timeSignature'));
 
         const handleInputMessage = (event: MessageEvent) => {
-            // let t = event.message.type;
-            // if (t === 'clock' || t === 'timecode' || t === 'start' || t === 'stop'){
-            //     let beat = clock.tick( <MidiClockMessageType> event.message.type );
-            //     send(new MidiplexMessage(event.message, { beat }), 'clock');
-            //     return;
-            // }
+            let t = event.message.type;
+            if (t === 'clock' || t === 'timecode' || t === 'start' || t === 'stop'){
+                let beat = clock.tick( <MidiClockMessageType> event.message.type );
+                send(new MidiplexClockMessage(event.message, { beat }), 'clock');
+                return;
+            }
             send(new MidiplexMessage(event.message), 'out');
         }
-
-        // const handleClock = (event: MessageEvent) => {
-        //     console.log(event.type);
-        //     send(new MidiplexMessage(event.message, []), 'clock');
-        // }
 
         const bind = () => {
             if (inputId){

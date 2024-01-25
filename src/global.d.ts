@@ -125,8 +125,12 @@ declare global {
     interface MidiplexNodeTypeDescription {
         props: { [key: string]: any },
         state: { [key: string]: any },
-        inputs: { [key: string]: MidiMessageType },
-        outputs: { [key: string]: MidiMessageType },
+        inputs: { 
+            [key: string]: MidiMessageType 
+        },
+        outputs: { 
+            [key: string]: MidiMessageType 
+        },
     }
     
     interface MidiplexNodeDefinition<T extends MidiplexNodeTypeDescription> {
@@ -137,7 +141,7 @@ declare global {
         inputs?: {
             [key in keyof T['inputs']]: {
                 name: string,
-                type?: 'message',
+                type?: 'message', //message type is assumed if not specified
                 messageTypes: NonEmptyArray<MidiMessageType>
             } | {
                 name: string,
@@ -150,8 +154,14 @@ declare global {
         outputs?: {
             [key in keyof T['outputs']]: {
                 name: string,
-                type?: MidiplexEdgeType,
+                type?: 'message',
                 messageTypes: NonEmptyArray<MidiMessageType>
+            } | {
+                name: string,
+                type: 'clock'
+            } | {
+                name: string,
+                type: 'command'
             }
         },
         props?: {
