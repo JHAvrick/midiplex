@@ -111,7 +111,10 @@ const setChannel = (data: Uint8Array, channel: number) => {
 const Util = Object.freeze(<const> {
     Math: {
         convertRange,
-        clamp
+        clamp,
+        inRange: (value: number, range: MidiRange) => {
+            return value >= range.min && value <= range.max;
+        }
     },
     Data: {
         isChannelMessage,
@@ -215,11 +218,7 @@ const Util = Object.freeze(<const> {
             return new Keyboards.KeyboardMonoLatch();
         }
     },
-    Controlchange: {
-        inRange: (cc: MidiplexMessage, range: CCRange) => {
-            return cc.data[2] >= range.min && cc.data[2] <= range.max;
-        }
-    },
+    Controlchange: {},
     Generate: {
         /**
          * Generates a `noteon` midiplex message.

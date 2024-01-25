@@ -252,13 +252,16 @@ declare global {
      * Prop types
      * --------------------------------------------------------------------------------------
      */
-    type CCRange =  {
+    type MidiRange =  {
         min: IntRange<0, 128>,
         max: IntRange<0, 128>
     }; // | [IntRange<0, 128>, IntRange<0, 128>];
 
+    /**
+     * CCRangeMap is a map of CC numbers to MidiRange objects.
+     */
     interface CCRangeMap {
-        [key: number]: CCRange
+        [cc: number]: MidiRange
     }
 
     interface NoteMap {

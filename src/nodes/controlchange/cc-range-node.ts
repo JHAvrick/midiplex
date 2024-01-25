@@ -49,12 +49,12 @@ const CCRangeNodeDef : MidiplexNodeDefinition<CCRangeNodeTypeDef> = {
             if (range){
                 switch (mode) {
                     case 'filter':
-                        if (!Util.Controlchange.inRange(message, range)){
+                        if (!Util.Math.inRange(message.data[2], range)){
                             send(message, 'out');
                         }
                         return;
                     case 'pass':
-                        if (Util.Controlchange.inRange(message, range)){
+                        if (Util.Math.inRange(message.data[2], range)){
                             send(message, 'out');
                         }
                         return;
