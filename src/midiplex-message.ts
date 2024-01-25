@@ -1,5 +1,5 @@
 import { Message, Utilities } from 'webmidi';
-import { clamp } from './util';
+import { clamp } from './util/util';
 
 class MidiplexMessage {
     /**
@@ -13,15 +13,9 @@ class MidiplexMessage {
      */
     private message: Message;
 
-    /**
-     * Beat can be populated on creation if the data is available
-     */
-    private _beat?: number;
-    
-    constructor(message: Message | Uint8Array, opts?: { trace?: string[], beat?: number }){
+    constructor(message: Message | Uint8Array, opts?: { trace?: string[] }){
         this.message = message instanceof Message ? message : new Message(message);
         this.trace = opts?.trace ?? [];
-        this._beat = opts?.beat;
     }
 
     addTrace(nodeKey: string){
@@ -80,10 +74,17 @@ class MidiplexMessage {
     get data(){
         return this.message.data;
     }
+}
+
+class MidiplexClockMessage extends MidiplexMessage {
+    private _beat: number = 0;
+    constructor(message: Message | Uint8Array, opts?: { trace?: string[], beat?: number }){
+        super(message, opts);
+    }
 
     get beat(){
         return this._beat;
     }
 }
 
-export { MidiplexMessage };
+export { MidiplexMessage, MidiplexClockMessage };

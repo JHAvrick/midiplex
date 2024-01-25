@@ -1,1 +1,0 @@
-//Node which maps a single note to mutliple notes, defined as intervals

@@ -1,37 +1,56 @@
-import { InputNode } from './input-node';
-import { OutputNode } from './output-node';
-import { DebugNode } from './debug-node';
-import { MessageTypePassNode } from './message-type-pass-node';
-import { MessageTypeSplitNode } from './message-type-split-node';
-import { TransposeNode } from './transpose-node';
-import { CCRangeNode } from './cc-range-node';
-import { CCScaleNode } from './cc-scale-node';
-import { CCMapNode } from './cc-map-node';
-import { TogglePathNode } from './toggle-path';
-import { CustomFilterNode } from './custom-filter-node';
-//import { ProgramChangeNode } from './program-change-node';
-import { CCPassNode } from './cc-pass-node';
-import { NoteMapNode } from './note-map-node';
-import { NotePolyLatchNode } from './note-poly-latch-node';
-import { SetChannelNode } from './set-channel-node';
-import { SplitChannelNode } from './split-channel-node';
+//barrel file for nodes, organized to match filesystem
+
+//channel
+import { ChannelSetNode } from './channel/channel-set-node';
+import { ChannelSplitNode } from './channel/channel-split-node';
+
+//controlchange
+import { CCFilterNode } from './controlchange/cc-filter-node';
+import { CCMapNode } from './controlchange/cc-map-node';
+import { CCRangeNode } from './controlchange/cc-range-node';
+
+//general
+import { CustomFilterNode } from './general/custom-filter-node';
+import { DebugNode } from './general/debug-node';
+import { InputNode } from './general/input-node';
+import { OutputNode } from './general/output-node';
+import { TogglePathNode } from './general/toggle-path';
+
+//message
+import { MessageTypeFilterNode } from './message/message-type-filter-node';
+import { MessageTypeSplitNode } from './message/message-type-split-node';
+
+//note
+import { NoteMapNode } from './note/note-map-node';
+import { NoteMonoLatchNode } from './note/note-mono-latch-node';
+import { NotePolyLatchNode } from './note/note-poly-latch-node';
+import { NoteTransposeNode } from './note/note-transpose-node';
+
 
 export {
-    OutputNode,
-    InputNode,
-    DebugNode,
-    MessageTypePassNode,
-    MessageTypeSplitNode,
-    TransposeNode,
-    CCRangeNode,
-    CCScaleNode,
+    //channel
+    ChannelSetNode,
+    ChannelSplitNode,
+
+    //controlchange
+    CCFilterNode,
     CCMapNode,
-    TogglePathNode,
+    CCRangeNode,
+    
+    //general
     CustomFilterNode,
-    //ProgramChangeNode,
-    CCPassNode,
+    DebugNode,
+    InputNode,
+    OutputNode,
+    TogglePathNode,
+    
+    //message
+    MessageTypeFilterNode,
+    MessageTypeSplitNode,
+
+    //note
     NoteMapNode,
+    NoteMonoLatchNode,
     NotePolyLatchNode,
-    SetChannelNode,
-    SplitChannelNode
+    NoteTransposeNode
 }

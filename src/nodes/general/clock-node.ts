@@ -1,0 +1,1 @@
+//TODO: Generates a 24 frame midi clock pulse, suitable for testing purposes only

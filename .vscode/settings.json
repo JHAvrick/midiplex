@@ -1,7 +1,27 @@
 {
     "cSpell.words": [
+        "allnotesoff",
+        "allsoundoff",
+        "channelaftertouch",
         "Controlchange",
+        "datadecrement",
+        "dataentrycoarse",
+        "dataentryfine",
+        "dataincrement",
+        "keyaftertouch",
+        "localcontrol",
         "Midiplex",
+        "monomode",
+        "noteoff",
+        "noteon",
+        "nrpn",
+        "NRPN",
+        "omnimode",
+        "pitchbend",
+        "polykeypressure",
+        "preconfigured",
+        "programchange",
+        "resetallcontrollers",
         "timecode"
     ]
 }

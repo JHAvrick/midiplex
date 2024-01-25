@@ -1,6 +1,16 @@
-import { MidiplexMessage } from "./midiplex-message";
+import { MidiplexMessage, MidiplexClockMessage } from "./midiplex-message";
+import { ClockMessageTypes } from './util/util';
 
 type NodeInstanceOutputEdgeKey<D extends MidiplexNodeTypeDescription> = keyof D['outputs'] | 'thru';
+
+const extractEdgeMessageTypes = (edge: { name: string, type?: MidiplexEdgeType, messageTypes?: NonEmptyArray<MidiMessageType> }) : Set<MidiMessageType> => {
+    if (edge.type === 'clock'){
+        return ClockMessageTypes;
+    } else if (edge.type === 'command'){
+        return new Set([]);
+    }
+    return new Set(edge.messageTypes);
+};
 
 /**
  * This class is the runtime representation of a node definition. It manages the node's state, props, edges, 
@@ -14,7 +24,8 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
     protected state: Map<keyof D['state'], any> = new Map<keyof D['state'], any>();
     protected inputs: Map<keyof D['inputs'], MidiplexEdgeInstance<D>> = new Map<keyof D['inputs'], MidiplexEdgeInstance<D>>();
     private outputs: Map<NodeInstanceOutputEdgeKey<D>, MidiplexEdgeInstance<D>> = new Map<NodeInstanceOutputEdgeKey<D>, MidiplexEdgeInstance<D>>();
-    private receiveHandler: null | ((message: MidiplexMessage, edgeKey: keyof D['inputs']) => void) = null;
+    private receiveMessageHandler: null | ((message: MidiplexMessage, edgeKey: keyof D['inputs']) => void) = null;
+    private receiveClockHandler: null | ((message: MidiplexClockMessage, edgeKey: keyof D['inputs']) => void) = null;
     private updateHandler: null | (() => void) = null;
     private ignoreUnknownMessageTypes: boolean = false;
 
@@ -26,7 +37,7 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
         //Build props, state, edges
         for (let key in node.props) {
             let k = key as keyof D['props'];
-            this.props.set(k, config.props?.[k] ?? node.props[k].value);
+            this.props.set(k, config?.[k] ?? node.props[k].value);
         }
 
         for (let key in node.state){
@@ -37,7 +48,8 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
         for (let key in node.inputs) {
             this.inputs.set(key as keyof D['inputs'], {
                 key: key,
-                messageTypes: node.inputs[key].messageTypes,
+                type: node.inputs[key].type ?? 'message',
+                messageTypes: extractEdgeMessageTypes(node.inputs[key]),
                 node: this,
                 to: []
             });
@@ -46,7 +58,8 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
         for (let key in node.outputs) {
             this.outputs.set(key as keyof D['outputs'], {
                 key: key,
-                messageTypes: node.outputs[key].messageTypes,
+                type: node.outputs[key].type ?? 'message',
+                messageTypes: extractEdgeMessageTypes(node.outputs[key]),
                 node: this,
                 to: []
             });
@@ -61,14 +74,23 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
             prop: this.getProp.bind(this),
             state: this.getOrSetStateInternal.bind(this),
             send: this.send.bind(this),
-            receive: this.bindReceive.bind(this),
-            update: this.bindUpdate.bind(this),
+            onMessage: this.bindReceiveMessage.bind(this),
+            onClock: this.bindReceiveClock.bind(this),
+            onUpdate: this.bindUpdate.bind(this),
         })
     }
 
-    protected bindReceive(handler: (message: MidiplexMessage, edgeKey: keyof D['inputs']) => void){
-        if (!this.receiveHandler){
-            this.receiveHandler = handler;
+    protected bindReceiveClock(handler: (message: MidiplexClockMessage, edgeKey: keyof D['inputs']) => void){
+        if (!this.receiveClockHandler){
+            this.receiveClockHandler = handler;
+            return;
+        }
+        throw new Error(`Receive handler already bound to node ${this.key}.`);
+    }
+
+    protected bindReceiveMessage(handler: (message: MidiplexMessage, edgeKey: keyof D['inputs']) => void){
+        if (!this.receiveMessageHandler){
+            this.receiveMessageHandler = handler;
             return;
         }
         throw new Error(`Receive handler already bound to node ${this.key}.`);
@@ -145,10 +167,10 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
         return false;
     }
 
-    private send<K extends keyof D['outputs']>(message: MidiplexMessage, edgeKey: K){
+    private send<K extends keyof D['outputs']>(message: MidiplexMessage | MidiplexClockMessage, edgeKey: K){
         let edge = edgeKey ? this.outputs.get(edgeKey) : this.getDefaultEdge();
         if (edge){
-            if (edge.messageTypes.includes(message.type)){
+            if (edge.messageTypes.has(message.type)){
                 edge.to.forEach((receivingEdge) => {
                     receivingEdge.node.receive(message, receivingEdge.key);
                 });
@@ -164,14 +186,24 @@ class MidiplexNodeInstance <D extends MidiplexNodeTypeDescription> {
         throw Error(`Output edge "${edge}" does not exist.`);
     }
 
+    receiveClock(message: MidiplexClockMessage, edge: keyof D['inputs']){
+        let edgeInstance = this.inputs.get(edge);
+        if (edgeInstance && edgeInstance.type === 'clock' && edgeInstance.messageTypes.has(message.type)){
+            if (edgeInstance.type === 'clock'){
+                this.receiveClockHandler?.(message, edge);
+                return;
+            }
+        }
+    }
+
     receive(message: MidiplexMessage, edge: string){
         let edgeInstance = this.inputs.get(edge);
         if (edgeInstance){
             /**
              * The edge instance supports the message type, so pass it to the node's receive handler.
              */
-            if (edgeInstance.messageTypes.includes(message.type)){
-                this.receiveHandler?.(message, edge);
+            if (edgeInstance.messageTypes.has(message.type)){
+                this.receiveMessageHandler?.(message, edge);
                 return;
             }
             /**

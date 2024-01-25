@@ -1,4 +1,4 @@
-import { MidiplexMessage } from './midiplex-message';
+import { MidiplexMessage, MidiClockMessage } from './midiplex-message';
 import { MidiplexNodeInstance } from './node-instance';
 
 declare global {
@@ -20,6 +20,7 @@ declare global {
         "timecode" |
         "start" | 
         "stop" |
+        
         "noteon" |
         "noteoff" |
         "controlchange" |
@@ -49,11 +50,8 @@ declare global {
         "rpn-datadecrement";
 
     type MidiChannelMessageType = 'noteon' | 'noteoff' | 'controlchange' | 'keyaftertouch' | 'programchange' | 'channelaftertouch' | 'pitchbend';
-
     type MidiClockMessageType = 'clock' | 'timecode' | 'start' | 'stop';
 
-    //type MidiMessageType = 'noteoff' | 'noteon' | 'keyaftertouch' | 'polykeypressure' | 'controlchange' | 'programchange' | 'pitchbend' | 'channelaftertouch' | 'system';
-    //type MidiChannelMessageType = 'noteoff' | 'noteon' | 'keyaftertouch' | 'controlchange' | 'programchange' | 'channelaftertouch' | 'pitchbend';
     type Note = 'C' | 'C#' | 'D' | 'D#' | 'E' | 'F' | 'F#' | 'G' | 'G#' | 'A' | 'A#' | 'B';
     type NoteWithOctave = `${Note}${number}`;
 
@@ -81,26 +79,20 @@ declare global {
      * a node to a node instance.
      * --------------------------------------------------------------------------------------
      */
-    interface NodeConfig<D extends MidiplexNodeTypeDescription> {
-        /**
-         * Pass in a set of property values to init the node with.
-         */
-        props?: { 
-            [key in keyof D['props']]: typeof D['props'] 
-        },
-        /**
-         * A node can be preconfigured to send messages to other nodes. The node key and edge key
-         * can be specified as an array of two string [node, edge] or as an object. The node/edge
-         * must already exist within the system or an error will be thrown.
-         */
-        // to?: {
-        //     [key: string]: [string, string] | { node: string, edge: string }
-        // }
+    type NodeConfig<D extends MidiplexNodeTypeDescription> = {
+        [key in keyof D['props']]?: typeof D['props'] 
     }
 
     interface EdgeNodeReference {
         receive: (message: MidiplexMessage, edge: string) => void,
+        receiveClock: (message: MidiClockMessage, edge: string) => void,
     }
+
+    /**
+     * The types of edges. Edge types are only ever compatible with other edges of the same type.
+     * Each edge type gets its own handler passed to the node definition.
+     */
+    type MidiplexEdgeType = 'message' | 'clock' | 'command';
 
     /**
      * --------------------------------------------------------------------------------------
@@ -113,9 +105,13 @@ declare global {
          */
         key: string,
         /**
+         * The edge type
+         */
+        type: MidiplexEdgeType
+        /**
          * Message types
          */
-        messageTypes: NonEmptyArray<MidiMessageType>
+        messageTypes: Set<MidiMessageType> // NonEmptyArray<MidiMessageType>
         /**
          * A reference to this edge's owner node.
          */
@@ -135,20 +131,26 @@ declare global {
     
     interface MidiplexNodeDefinition<T extends MidiplexNodeTypeDescription> {
         name: string,
-        //key: string,
-        //key should be a type of MidiplexNode
         key: string,
         description?: string,
         ignoreUnknownMessageTypes?: boolean,
         inputs?: {
             [key in keyof T['inputs']]: {
                 name: string,
+                type?: 'message',
                 messageTypes: NonEmptyArray<MidiMessageType>
+            } | {
+                name: string,
+                type: 'clock'
+            } | {
+                name: string,
+                type: 'command'
             }
         }
         outputs?: {
             [key in keyof T['outputs']]: {
                 name: string,
+                type?: MidiplexEdgeType,
                 messageTypes: NonEmptyArray<MidiMessageType>
             }
         },
@@ -168,8 +170,9 @@ declare global {
             prop: <K extends keyof T['props']>(key: K) => T['props'][K],
             state: <K extends keyof T['state']>(key: K, newVal?: T['state'][K]) => T['state'][K],
             send: <K extends keyof T['outputs'] | 'thru'>(message: MidiplexMessage, edge: K) => void,
-            receive: (handler: <K extends keyof T['inputs']>(message: MidiplexMessage, edge: K) => void) => void,
-            update: (handler: () => void) => void
+            onMessage: (handler: <K extends keyof T['inputs']>(message: MidiplexMessage, edge: K) => void) => void,
+            onClock: (handler: <K extends keyof T['inputs']>(message: MidiClockMessage, edge: K) => void) => void,
+            onUpdate: (handler: () => void) => void
         })) => void
     }
 
