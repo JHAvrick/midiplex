@@ -11,7 +11,7 @@ type NoteVelocityRangeNodeTypeDef = {
     },
     props: {
         range: MidiRange,
-        mode: 'filter' | 'pass' | 'clamp'
+        mode: 'filter' | 'pass' | 'clamp' | 'scale'
     },
     state: {}
 }
@@ -66,6 +66,15 @@ const NoteVelocityRangeNodeDef : MidiplexNodeDefinition<NoteVelocityRangeNodeTyp
                     ]);
                     
                     send(new MidiplexMessage(dataClamp), 'out');
+                    return;
+                case 'scale':
+                    let dataScale = new Uint8Array([
+                        message.data[0],
+                        message.data[1],
+                        Util.Math.convertRange(message.data[2], 0, 127, range.min, range.max)
+                    ]);
+
+                    send(new MidiplexMessage(dataScale), 'out');
                     return;
             }
         })

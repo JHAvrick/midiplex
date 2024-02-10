@@ -29,14 +29,26 @@ let clamp = new NoteVelocityRangeNode('clamp', {
     }
 });
 
+let scale = new NoteVelocityRangeNode('scale', { 
+    mode: 'scale',
+    range: {
+        min: 50, 
+        max: 100
+    }
+});
+
+
 filter.connect('out', debug.getInputEdge('in'));
 pass.connect('out', debug.getInputEdge('in'));
 clamp.connect('out', debug.getInputEdge('in'));
+scale.connect('out', debug.getInputEdge('in'));
 
 //Each filter mode should handle these somewhat differently
+let min = Util.Generate.noteon(74, 0);
 let belowRange = Util.Generate.noteon(74, 40);
 let inRange = Util.Generate.noteon(74, 60);
 let aboveRange = Util.Generate.noteon(74, 120);
+let max = Util.Generate.noteon(74, 127);
 
 //filter mode
 describe('NoteVelocityRangeNode - "filter" mode', () => {
@@ -92,5 +104,37 @@ describe('NoteVelocityRangeNode - "clamp" mode', () => {
         });
 
         clamp.receive(inRange, 'in');
+    });
+});
+
+
+
+//scale mode
+describe('NoteVelocityRangeNode - "scale" mode', () => {
+    test('Velocity value is scaled to MIN value specified by range', (done) => {
+        debug.setProp('callback', (m: MidiplexMessage) => {
+            expect(m.data[2] === 50).toBe(true);
+            done();
+        });
+
+        scale.receive(min, 'in');
+    });
+
+    test('Velocity value is scaled within the given range', (done) => {
+        debug.setProp('callback', (m: MidiplexMessage) => {
+            expect(m.data[2] >= 50 && m.data[2] <= 100 && m.data[2] !== 60).toBe(true);
+            done();
+        });
+
+        scale.receive(inRange, 'in');
+    });
+
+    test('Velocity value is scaled to MAX value specified by range', (done) => {
+        debug.setProp('callback', (m: MidiplexMessage) => {
+            expect(m.data[2] === 100).toBe(true);
+            done();
+        });
+
+        scale.receive(max, 'in');
     });
 });
