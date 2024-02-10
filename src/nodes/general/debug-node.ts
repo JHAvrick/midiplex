@@ -48,30 +48,7 @@ const DebugNodeDef : MidiplexNodeDefinition<DebugNodeTypeDef> = {
         }
     },
     node({ send, onMessage, prop }){
-        // let quarterNote = Util.Clock.onBeat(4, () => {
-        //     console.log('quarter note');
-        // })
-
-        // // let eighthNote = Util.Clock.onBeat(8, () => {
-        // //     console.log('eighth note');
-        // // })
-
-        // let sixteenthNote = Util.Clock.onBeat(16, () => {
-        //     console.log('sixteenth note');
-        // })
-
         onMessage((message, edge) => {
-            // if (edge === 'clock' && message.type === 'clock'  && message.beat === 32){
-            //     //console.log(message.beat);
-            //     send(Util.Generate.noteon(75, 64), 'out');
-            //     send(Util.Generate.noteon(77, 64), 'out');
-            //     setTimeout(() => {
-            //         send(Util.Generate.noteoff(75, 64), 'out');
-            //         send(Util.Generate.noteoff(77, 64), 'out');
-            //     }, 500); 
-            //     return;
-            // }
-
             if (prop('logToConsole')) {
                 console.log(message);
             }
